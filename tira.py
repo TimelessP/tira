@@ -39,13 +39,24 @@ class Controller:
                 "help": self.help,
                 "space": self.space,
                 "spaces": self.spaces,
+                "find": self.find,
             }
             print("")
-            action, *args = input(f"tira: {self.tira_space}> ").split()
+            action, *args = input(f"tira: {self.tira_space}> ").split() or " "
             if action not in actions:
-                print("Unknown action")
+                if action.strip():
+                    print("Invalid action")
                 continue
             actions[action](*args)
+
+    def find(self, text):
+        for issue in self.issues.values():
+            if text.lower() in issue.description.lower():
+                print("")
+                self.show(issue.key)
+                is_more = input("More? <Enter|n> ")
+                if is_more.lower() == "n":
+                    break
 
     def space(self, space=None):
         if not space or not re.search(r"^[A-Z]{2,3}$", space):
@@ -114,6 +125,7 @@ class Controller:
         print("\thelp           Show this help.")
         print("\tspace <space>  Set the space for new issues.")
         print("\tspaces         List all spaces.")
+        print("\tfind <text>    Find issues containing text.")
 
         print ("Current space:", self.tira_space)
 
