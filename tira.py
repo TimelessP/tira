@@ -6,7 +6,6 @@ from typing import Dict
 from model import Issue
 
 ISSUE_NOT_FOUND = "Issue not found"
-
 TIRADATA_PICKLE = "tiradata.pickle"
 
 
@@ -115,6 +114,8 @@ class Controller:
         print("\thelp           Show this help.")
         print("\tspace <space>  Set the space for new issues.")
         print("\tspaces         List all spaces.")
+
+        print ("Current space:", self.tira_space)
 
 
 if __name__ == "__main__":
