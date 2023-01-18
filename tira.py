@@ -49,7 +49,10 @@ class Controller:
                 continue
             actions[action](*args)
 
-    def find(self, text):
+    def find(self, text=None):
+        if not text:
+            print("Text to find is required")
+            return
         for issue in self.issues.values():
             if text.lower() in issue.description.lower():
                 print("")
@@ -81,7 +84,10 @@ class Controller:
             formatted_date = issue.created.strftime("%Y-%m-%d %H:%M")
             print(f"{issue.key}\t{formatted_date}\t{repr(issue.description)}")
 
-    def show(self, key):
+    def show(self, key=None):
+        if not key:
+            print("Key is required")
+            return
         issue = self.issues.get(key, None) or self.issues.get(f"{self.tira_space}-{key}", None)
         if issue is None:
             print(ISSUE_NOT_FOUND)
@@ -90,7 +96,10 @@ class Controller:
         print(issue.description)
         print(issue.created)
 
-    def delete(self, key):
+    def delete(self, key=None):
+        if not key:
+            print("Key is required")
+            return
         issue = self.issues.get(key, None) or self.issues.get(f"{self.tira_space}-{key}", None)
         if issue is None:
             print(ISSUE_NOT_FOUND)
@@ -99,7 +108,10 @@ class Controller:
         self.save()
         print("Deleted issue")
 
-    def edit(self, key):
+    def edit(self, key=None):
+        if not key:
+            print("Key is required")
+            return
         issue = self.issues.get(key, None) or self.issues.get(f"{self.tira_space}-{key}", None)
         if issue is None:
             print(ISSUE_NOT_FOUND)
