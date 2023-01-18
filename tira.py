@@ -95,7 +95,7 @@ class Controller:
         if issue is None:
             print(ISSUE_NOT_FOUND)
             return
-        del self.issues[key]
+        del self.issues[issue.key]
         self.save()
         print("Deleted issue")
 
