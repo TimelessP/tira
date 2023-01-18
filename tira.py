@@ -5,6 +5,7 @@ from typing import Dict
 
 from model import Issue
 
+KEY_IS_REQUIRED = "Key is required"
 ISSUE_NOT_FOUND = "Issue not found"
 TIRADATA_PICKLE = "tiradata.pickle"
 
@@ -86,7 +87,7 @@ class Controller:
 
     def show(self, key=None):
         if not key:
-            print("Key is required")
+            print(KEY_IS_REQUIRED)
             return
         issue = self.issues.get(key, None) or self.issues.get(f"{self.tira_space}-{key}", None)
         if issue is None:
@@ -98,7 +99,7 @@ class Controller:
 
     def delete(self, key=None):
         if not key:
-            print("Key is required")
+            print(KEY_IS_REQUIRED)
             return
         issue = self.issues.get(key, None) or self.issues.get(f"{self.tira_space}-{key}", None)
         if issue is None:
@@ -110,7 +111,7 @@ class Controller:
 
     def edit(self, key=None):
         if not key:
-            print("Key is required")
+            print(KEY_IS_REQUIRED)
             return
         issue = self.issues.get(key, None) or self.issues.get(f"{self.tira_space}-{key}", None)
         if issue is None:
@@ -139,7 +140,7 @@ class Controller:
         print("\tspaces         List all spaces.")
         print("\tfind <text>    Find issues containing text.")
 
-        print ("Current space:", self.tira_space)
+        print("Current space:", self.tira_space)
 
 
 if __name__ == "__main__":
