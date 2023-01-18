@@ -54,7 +54,7 @@ class Controller:
             if text.lower() in issue.description.lower():
                 print("")
                 self.show(issue.key)
-                is_more = input("More? <Enter|n> ")
+                is_more = input("More? (Enter|n) ")
                 if is_more.lower() == "n":
                     break
 
