@@ -208,10 +208,6 @@ class Controller:
 
 
 if __name__ == "__main__":
-    # Parse arguments, such that --data_file=<path to file> can be used, but will
-    # default to the user's AppData directory, or ~/.local/tira/tira_data.pickle on Gnu/Linux,
-    # or ~/Library/Application Support/tira/tira_data.pickle on macOS.
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_file", help="Path to the data file")
     process_args = parser.parse_args()
@@ -225,6 +221,6 @@ if __name__ == "__main__":
             tira_data_file_path = os.path.join(os.getenv("HOME"), "Library", "Application Support", "tira",
                                                TIRA_DATA_PICKLE)
         else:
-            tira_data_file_path = os.path.join(os.getenv("HOME"), ".local", "tira", TIRA_DATA_PICKLE)
+            tira_data_file_path = os.path.join(os.getenv("HOME"), ".config", "tira", TIRA_DATA_PICKLE)
 
     Controller(tira_data_file_path).run()
