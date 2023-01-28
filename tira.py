@@ -58,7 +58,11 @@ class Controller:
         }
         while self.is_running:
             print("")
-            action, *args = input(f"tira: {self.tira_space}> ").split() or " "
+            try:
+                action, *args = input(f"tira: {self.tira_space}> ").split() or " "
+            except EOFError:
+                action = "exit"
+                args = []
 
             if os.path.exists(self.data_file_path) and \
                     (self.last_modified is None or
