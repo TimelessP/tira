@@ -17,16 +17,21 @@ class Controller:
         self.next_id = 1
         self.tira_space = "TI"
         self.load()
+        self.last_modified = None
 
     def save(self):
         with open(TIRADATA_PICKLE, "wb") as f:
             pickle.dump(self.issues, f)
+
+        self.last_modified = os.path.getmtime(TIRADATA_PICKLE)
 
     def load(self):
         if os.path.exists(TIRADATA_PICKLE):
             with open(TIRADATA_PICKLE, "rb") as f:
                 self.issues = pickle.load(f)
                 self.next_id = max(int(key.split("-")[1]) for key in self.issues) + 1
+
+            self.last_modified = os.path.getmtime(TIRADATA_PICKLE)
 
     def run(self):
         actions = {
@@ -44,6 +49,15 @@ class Controller:
         while self.is_running:
             print("")
             action, *args = input(f"tira: {self.tira_space}> ").split() or " "
+
+            if os.path.exists(TIRADATA_PICKLE) and (self.last_modified is None or
+                                                    os.path.getmtime(TIRADATA_PICKLE) != self.last_modified):
+                print("The data file has been modified by another process.")
+                print(f"Expected timestamp:\t{self.last_modified}")
+                print(f"Actual timestamp:\t{os.path.getmtime(TIRADATA_PICKLE)}")
+                self.load()
+                print("Data has now been reloaded.")
+                continue
 
             for action_name, handler in actions.items():
                 if action_name.startswith(action):
@@ -155,7 +169,6 @@ class Controller:
         print(f"Edited issue {issue.key}")
 
     def quit(self, *_):
-        self.save()
         self.is_running = False
 
     def help(self, *_):
