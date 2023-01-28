@@ -1,6 +1,6 @@
 # tira
 
-Tiny, minimal, single-user, text-based issue tracking system.
+Tiny, minimal, text-based issue tracking system.
 
 ## Running
 
