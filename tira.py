@@ -59,8 +59,11 @@ class Controller:
         if not text:
             print("Text to find is required")
             return
+
         for issue in self.issues.values():
-            if text.lower() in issue.description.lower():
+            formatted_date = issue.created.strftime("%Y-%m-%d %H:%M")
+            line = f"{issue.key}\t{formatted_date}\t{repr(issue.description)}"
+            if text.lower() in line.lower():
                 print("")
                 self.show(issue.key)
                 is_more = input("More? (Enter|n) ")
@@ -72,6 +75,7 @@ class Controller:
         if not space or not re.search(r"^[A-Z]{2,3}$", space):
             print("Space must be two or three capital letters")
             return
+
         self.tira_space = space
 
     def spaces(self, *args):
