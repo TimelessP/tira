@@ -152,7 +152,7 @@ class Controller:
         print(f"Description: {issue.description}")
         issue.description = input("New description (Enter=no change): ") or issue.description
         self.save()
-        print("Edited issue")
+        print(f"Edited issue {issue.key}")
 
     def quit(self, *_):
         self.save()
