@@ -12,12 +12,12 @@ TIRADATA_PICKLE = "tiradata.pickle"
 
 class Controller:
     def __init__(self):
+        self.last_modified = None
         self.issues: Dict[str, Issue] = {}
         self.is_running = True
         self.next_id = 1
         self.tira_space = "TI"
         self.load()
-        self.last_modified = None
 
     def save(self):
         with open(TIRADATA_PICKLE, "wb") as f:
