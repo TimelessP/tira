@@ -4,6 +4,7 @@ import pickle
 import re
 import sys
 from typing import Dict
+from datetime import datetime
 
 from model import Issue
 
@@ -62,11 +63,8 @@ class Controller:
             if os.path.exists(self.data_file_path) and \
                     (self.last_modified is None or
                      os.path.getmtime(self.data_file_path) != self.last_modified):
-                print("The data file has been modified by another process.")
-                print(f"Expected timestamp:\t{self.last_modified}")
-                print(f"Actual timestamp:\t{os.path.getmtime(self.data_file_path)}")
-                self.load()
-                print("Data has now been reloaded.")
+
+                self._force_reload_data()
                 continue
 
             for action_name, handler in actions.items():
@@ -78,6 +76,17 @@ class Controller:
 
             # noinspection PyArgumentList
             handler(*args)
+
+    def _force_reload_data(self):
+        formatted_expected = datetime.fromtimestamp(self.last_modified).strftime(
+            "%Y-%m-%d %H:%M:%S") if self.last_modified else "None"
+        formatted_actual = datetime.fromtimestamp(os.path.getmtime(self.data_file_path)).strftime(
+            "%Y-%m-%d %H:%M:%S")
+        print("The data file has been modified by another process.")
+        print(f"Expected timestamp:\t{formatted_expected}")
+        print(f"Actual timestamp:\t{formatted_actual}")
+        self.load()
+        print("Data has now been reloaded.")
 
     def find(self, *args):
         text = " ".join(args)
