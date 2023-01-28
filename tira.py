@@ -170,7 +170,7 @@ class Controller:
         print("\tspace <space>    Set the space for new issues.")
         print("\tspaces [<text>]  List spaces.")
         print("\tfind <text>      Find issues in all spaces that contain the text.")
-
+        print("")
         print("Current space:", self.tira_space)
 
 
