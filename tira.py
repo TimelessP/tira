@@ -1,17 +1,22 @@
+import argparse
 import os.path
 import pickle
 import re
+import sys
 from typing import Dict
 
 from model import Issue
 
+TIRA_DATA_PICKLE = "tira_data.pickle"
 KEY_IS_REQUIRED = "Key is required"
 ISSUE_NOT_FOUND = "Issue not found"
-TIRADATA_PICKLE = "tiradata.pickle"
+
+tira_data_file_path = TIRA_DATA_PICKLE
 
 
 class Controller:
-    def __init__(self):
+    def __init__(self, data_file_path):
+        self.data_file_path = data_file_path
         self.last_modified = None
         self.issues: Dict[str, Issue] = {}
         self.is_running = True
@@ -20,18 +25,22 @@ class Controller:
         self.load()
 
     def save(self):
-        with open(TIRADATA_PICKLE, "wb") as f:
+        os.makedirs(os.path.dirname(self.data_file_path), exist_ok=True)
+        with open(self.data_file_path, "wb") as f:
             pickle.dump(self.issues, f)
 
-        self.last_modified = os.path.getmtime(TIRADATA_PICKLE)
+        self.last_modified = os.path.getmtime(self.data_file_path)
 
     def load(self):
-        if os.path.exists(TIRADATA_PICKLE):
-            with open(TIRADATA_PICKLE, "rb") as f:
+        if os.path.exists(self.data_file_path):
+            with open(self.data_file_path, "rb") as f:
                 self.issues = pickle.load(f)
-                self.next_id = max(int(key.split("-")[1]) for key in self.issues) + 1
+                if not self.issues:
+                    self.next_id = 1
+                else:
+                    self.next_id = max(int(key.split("-")[1]) for key in self.issues) + 1
 
-            self.last_modified = os.path.getmtime(TIRADATA_PICKLE)
+            self.last_modified = os.path.getmtime(self.data_file_path)
 
     def run(self):
         actions = {
@@ -50,11 +59,12 @@ class Controller:
             print("")
             action, *args = input(f"tira: {self.tira_space}> ").split() or " "
 
-            if os.path.exists(TIRADATA_PICKLE) and (self.last_modified is None or
-                                                    os.path.getmtime(TIRADATA_PICKLE) != self.last_modified):
+            if os.path.exists(self.data_file_path) and \
+                    (self.last_modified is None or
+                     os.path.getmtime(self.data_file_path) != self.last_modified):
                 print("The data file has been modified by another process.")
                 print(f"Expected timestamp:\t{self.last_modified}")
-                print(f"Actual timestamp:\t{os.path.getmtime(TIRADATA_PICKLE)}")
+                print(f"Actual timestamp:\t{os.path.getmtime(self.data_file_path)}")
                 self.load()
                 print("Data has now been reloaded.")
                 continue
@@ -66,6 +76,7 @@ class Controller:
                 print("Invalid action")
                 continue
 
+            # noinspection PyArgumentList
             handler(*args)
 
     def find(self, *args):
@@ -188,4 +199,23 @@ class Controller:
 
 
 if __name__ == "__main__":
-    Controller().run()
+    # Parse arguments, such that --data_file=<path to file> can be used, but will
+    # default to the user's AppData directory, or ~/.local/tira/tira_data.pickle on Gnu/Linux,
+    # or ~/Library/Application Support/tira/tira_data.pickle on macOS.
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data_file", help="Path to the data file")
+    process_args = parser.parse_args()
+
+    if process_args.data_file:
+        tira_data_file_path = process_args.data_file
+    else:
+        if sys.platform == "win32":
+            tira_data_file_path = os.path.join(os.getenv("APPDATA"), "tira", TIRA_DATA_PICKLE)
+        elif sys.platform == "darwin":
+            tira_data_file_path = os.path.join(os.getenv("HOME"), "Library", "Application Support", "tira",
+                                               TIRA_DATA_PICKLE)
+        else:
+            tira_data_file_path = os.path.join(os.getenv("HOME"), ".local", "tira", TIRA_DATA_PICKLE)
+
+    Controller(tira_data_file_path).run()

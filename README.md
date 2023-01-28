@@ -8,4 +8,8 @@ Tiny, minimal, text-based issue tracking system.
 python3.11 -m tira
 ```
 
-Data is saved automatically to `tiradata.pickle` file in the current directory.
+or
+
+```bash
+python3.11 -m tira --data_file ./tiradata.pickle
+```
