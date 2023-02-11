@@ -26,7 +26,10 @@ class Controller:
         self.load()
 
     def save(self):
-        os.makedirs(os.path.dirname(self.data_file_path), exist_ok=True)
+        # If the path contains directory separators, create the directories.
+        if os.path.dirname(self.data_file_path):
+            os.makedirs(os.path.dirname(self.data_file_path), exist_ok=True)
+
         with open(self.data_file_path, "wb") as f:
             pickle.dump(self.issues, f)
 
